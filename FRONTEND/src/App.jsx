@@ -21,7 +21,7 @@ function App() {
     setLoading(true)
     setStatus("Sending emails...")
     console.log(emailList);
-    axios.post("https://bulkmail-app-72v8.onrender.com",
+    axios.post("https://bulkmail-app-72v8.onrender.com/send-emails",
        { message: msg, subject: subject, emailList: emailList })
       .then(function () {
         setTimeout(() => {
