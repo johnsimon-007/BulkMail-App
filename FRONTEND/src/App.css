@@ -1,0 +1,142 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    font-family: Arial, sans-serif;
+}
+.container {
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #1e1b4b,
+        #312e81
+    );
+    min-height: 100vh;
+     display: flex;
+    flex-direction: column;
+}
+.header{
+    color:white;
+    text-align: center;
+}
+.header h1{
+    font-size: 50px;
+    padding: 20px;
+}
+.header p{
+    font-size: 20px;
+}
+.subject-input{
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.subject-input,
+.upload-section textarea,
+.upload-area{
+    width: 90%;
+    max-width: 350px;
+}
+
+.upload-section{
+    display:flex;
+    flex-direction: column;
+    gap:20px;
+    align-items: center;
+    margin-top: 20px;
+}
+.upload-section p{
+    color:white;
+    font-size: 20px;
+}
+
+.upload-section textarea{
+    padding: 10px;
+    height: 100px;
+    border-radius: 5px;
+}
+
+.upload-area{
+    border: 2px dashed white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+.upload-area,
+textarea {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    color: #2563eb;
+    font-size: 16px;
+}
+.upload-area p{
+    margin-top: 10px;
+    color: #2563eb;
+    font-weight: 600;
+}
+.upload-input{
+    border-radius: 20px;
+    cursor: pointer;
+    background: white;
+    width:fit-content;
+    color: #2563eb;
+    padding: 6px 10px;
+    margin-top: 10px;
+     
+}
+.send-btn{
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    display: block;
+   
+}
+.send-btn:hover{
+    background: #1e40af;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid white;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.status {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+@media (max-width: 600px){
+    .header h1{
+        font-size: 32px;
+    }
+
+    .header p{
+        font-size: 16px;
+    }
+    .container{
+    padding: 20px;
+}
+}

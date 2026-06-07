@@ -1,0 +1,102 @@
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("Connected to MongoDB");
+    })
+    .catch((err) => {
+        console.log("MongoDB Error:", err);
+    });
+
+const credentialSchema = new mongoose.Schema({
+    user: String,
+    pass: String
+});
+
+const emailSchema = new mongoose.Schema({
+    subject: String,
+    message: String,
+    recipients: [String],
+    status: String,
+    sentAt: { type: Date, default: Date.now }
+})
+
+const credential = mongoose.model("credential", credentialSchema, "BulkMail");
+const Email = mongoose.model("email", emailSchema, "EmailHistory");
+
+let transporter;
+
+credential.find()
+    .then((data) => {
+        console.log("Credentials fetched successfully");
+        console.log(data);
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: data[0].user.trim(),
+                pass: data[0].pass.trim(),
+            },
+        });
+
+    })
+    .catch((err) => {
+        console.log("Error fetching credentials:", err);
+    });
+
+
+app.post('/send-emails', async (req, res) => {
+    console.log("Route hit!");
+    try {
+
+        const msg = req.body.message;
+        const Emails = req.body.emailList;
+        const subject=req.body.subject;
+
+        console.log("Message:", msg);
+        console.log("Emails:", Emails);
+        console.log("Subject:", subject);
+
+        if (!transporter) {
+            return res.status(500).send("Transporter not initialized");
+        }
+
+        for (let i = 0; i < Emails.length; i++) {
+
+            await transporter.sendMail({
+                from: "johnsimonjmj@gmail.com",
+                to: Emails[i],
+                subject: subject,
+                text: msg
+            });
+
+            console.log(`Email sent to ${Emails[i]}`);
+        }
+        await Email.create({
+            subject: subject,
+            message: msg,
+            recipients: Emails,
+            status: "Success"
+        });
+        res.status(200).send("Emails sent successfully");
+
+    } catch (err) {
+
+        console.error(err);
+        res.status(500).send("Error sending emails");
+
+    }
+
+});
+
+app.listen(3000, () => {
+    console.log("Server started on port 3000");
+});
