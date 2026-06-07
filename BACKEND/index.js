@@ -89,12 +89,9 @@ app.post('/send-emails', async (req, res) => {
         res.status(200).send("Emails sent successfully");
 
     } catch (err) {
-
-        console.error(err);
-        res.status(500).send("Error sending emails");
-
-    }
-
+    console.error("FULL ERROR:", err);
+    res.status(500).send(err.message);
+}
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
