@@ -40,11 +40,13 @@ credential.find()
         console.log("Credentials fetched successfully");
         console.log(data);
         transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USER || data[0].user.trim(),
                 pass: process.env.EMAIL_PASS || data[0].pass.trim(),
-            },
+            }
         });
 
     })
@@ -59,7 +61,7 @@ app.post('/send-emails', async (req, res) => {
 
         const msg = req.body.message;
         const Emails = req.body.emailList;
-        const subject=req.body.subject;
+        const subject = req.body.subject;
 
         console.log("Message:", msg);
         console.log("Emails:", Emails);
@@ -89,9 +91,9 @@ app.post('/send-emails', async (req, res) => {
         res.status(200).send("Emails sent successfully");
 
     } catch (err) {
-    console.error("FULL ERROR:", err);
-    res.status(500).send(err.message);
-}
+        console.error("FULL ERROR:", err);
+        res.status(500).send(err.message);
+    }
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
