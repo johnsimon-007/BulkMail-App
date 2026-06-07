@@ -42,8 +42,8 @@ credential.find()
         transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: data[0].user.trim(),
-                pass: data[0].pass.trim(),
+                user: process.env.EMAIL_USER || data[0].user.trim(),
+                pass: process.env.EMAIL_PASS || data[0].pass.trim(),
             },
         });
 
@@ -96,7 +96,7 @@ app.post('/send-emails', async (req, res) => {
     }
 
 });
-
-app.listen(3000, () => {
-    console.log("Server started on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
 });
