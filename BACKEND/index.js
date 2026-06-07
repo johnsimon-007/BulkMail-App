@@ -38,7 +38,6 @@ let transporter;
 credential.find()
     .then((data) => {
         console.log("Credentials fetched successfully");
-        console.log(data);
         transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
@@ -46,6 +45,13 @@ credential.find()
             auth: {
                 user: process.env.EMAIL_USER || data[0].user.trim(),
                 pass: process.env.EMAIL_PASS || data[0].pass.trim(),
+            }
+        });
+        transporter.verify((error, success) => {
+            if (error) {
+                console.log("VERIFY ERROR:", error);
+            } else {
+                console.log("SMTP READY");
             }
         });
 
