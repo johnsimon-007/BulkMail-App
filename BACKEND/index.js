@@ -35,19 +35,26 @@ const Email = mongoose.model(
     emailSchema,
     "EmailHistory"
 );
-
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
+    service: "gmail",
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
 });
 
-// Send Emails Route
+transporter.verify((error, success) => {
+    if (error) {
+        console.error("SMTP ERROR:", error);
+    } else {
+        console.log("SMTP READY");
+    }
+});
+
+
 app.post('/send-emails', async (req, res) => {
 
     console.log("Route hit!");
@@ -59,9 +66,9 @@ app.post('/send-emails', async (req, res) => {
         console.log("Subject:", subject);
         console.log("Recipients:", emailList.length);
 
-        if (!emailList || emailList.length === 0) {
-            return res.status(400).send("No emails provided");
-        }
+        if (!Array.isArray(emailList) || emailList.length === 0) {
+    return res.status(400).send("No emails provided");
+}
 
         for (let i = 0; i < emailList.length; i++) {
 
