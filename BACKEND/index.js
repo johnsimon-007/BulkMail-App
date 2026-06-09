@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+// MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Connected to MongoDB");
@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_URI)
         console.log("MongoDB Error:", err);
     });
 
-
+// Email History Schema
 const emailSchema = new mongoose.Schema({
     subject: String,
     message: String,
@@ -35,28 +35,26 @@ const Email = mongoose.model(
     emailSchema,
     "EmailHistory"
 );
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
 
+// Brevo SMTP
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp-relay.brevo.com",
     port: 587,
     secure: false,
-    family: 4,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.BREVO_USER,
+        pass: process.env.BREVO_PASS
     }
 });
 
-transporter.verify((error, success) => {
-    if (error) {
-        console.error("SMTP ERROR:", error);
+// Test SMTP connection when server starts
+transporter.verify((err, success) => {
+    if (err) {
+        console.log("SMTP ERROR:", err);
     } else {
         console.log("SMTP READY");
     }
 });
-
 
 app.post('/send-emails', async (req, res) => {
 
@@ -70,19 +68,20 @@ app.post('/send-emails', async (req, res) => {
         console.log("Recipients:", emailList.length);
 
         if (!Array.isArray(emailList) || emailList.length === 0) {
-    return res.status(400).send("No emails provided");
-}
+            return res.status(400).send("No emails provided");
+        }
 
         for (let i = 0; i < emailList.length; i++) {
 
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
+            const info = await transporter.sendMail({
+                from: "johnsimon987654@gmail.com",
                 to: emailList[i],
                 subject: subject,
                 text: message
             });
 
             console.log(`Email sent to ${emailList[i]}`);
+            console.log(info.messageId);
         }
 
         await Email.create({
